@@ -10,31 +10,33 @@ const validationSchema = Joi.object({
   password: Joi.string().required().label("Password"),
 });
 
-const validate = (data) => validationSchema.validate(data);
+const validate = (data) =>
+  validationSchema.validate(data, { abortEarly: false });
 
 router.post("/", async (req, res) => {
+  //Destructuring and validating input data
   const { error: joiErrors } = validate(req.body);
-
   if (joiErrors) {
     return res.status(400).send({ errors: joiErrorsToObject(joiErrors) });
   }
-
+  //Destructuring and finding the user with email and checking if it is in the db or not
   const { password, email } = req.body;
-  let user = await User.findOne({ email });
+  const user = await User.findOne({ email });
   if (!user) {
     return res
       .status(400)
       .send({ error: "User with the given email doesn't exist." });
   }
+  //Checking if user password matches or not
   const isPasswordValid = await bcrypt.compare(password, user.password);
-
   if (!isPasswordValid) {
     return res
       .status(400)
       .send({ error: "The given email or password is invalid" });
   }
-
-  res.send({ user: { name: user.name, email: user.email } });
+  //Generating json web token of the user
+  const token = user.generateJWTToken();
+  res.send({ token });
 });
 
 module.exports = router;

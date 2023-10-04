@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const { Schema, model } = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new Schema({
   name: {
@@ -21,6 +22,18 @@ const userSchema = new Schema({
   },
 });
 
+userSchema.methods.generateJWTToken = function () {
+  const token = jwt.sign(
+    {
+      _id: this._id,
+      name: this.name,
+      email: this.email,
+    },
+    process.env.JWT_PRIVATE_KEY
+  );
+  return token;
+};
+
 const User = model("User", userSchema);
 
 const validationSchema = Joi.object({
@@ -29,4 +42,7 @@ const validationSchema = Joi.object({
   password: Joi.string().min(3).max(36).required(),
 });
 
-module.exports = { User, validate: (data) => validationSchema.validate(data) };
+module.exports = {
+  User,
+  validate: (data) => validationSchema.validate(data, { abortEarly: false }),
+};

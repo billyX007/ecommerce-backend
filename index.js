@@ -10,6 +10,11 @@ const login = require("./routes/login");
 const app = express();
 const port = process.env.PORT || 5000;
 
+if (!process.env.JWT_PRIVATE_KEY) {
+  console.log("JWT Private key is not set up in the environment variables.");
+  process.exit(1);
+}
+
 connect(process.env.DB_URL)
   .then(() => console.log("Connected to MongoDB!"))
   .catch((err) => console.log("Could not connect to MongoDB", err));
