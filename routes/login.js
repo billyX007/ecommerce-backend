@@ -14,10 +14,11 @@ const validate = (data) =>
   validationSchema.validate(data, { abortEarly: false });
 
 router.post("/", async (req, res) => {
+  console.log(req.body);
   //Destructuring and validating input data
   const { error: joiErrors } = validate(req.body);
   if (joiErrors) {
-    return res.status(400).send({ errors: joiErrorsToObject(joiErrors) });
+    return res.status(400).send({ error: joiErrorsToObject(joiErrors) });
   }
   //Destructuring and finding the user with email and checking if it is in the db or not
   const { password, email } = req.body;
@@ -25,14 +26,14 @@ router.post("/", async (req, res) => {
   if (!user) {
     return res
       .status(400)
-      .send({ error: "User with the given email doesn't exist." });
+      .send({ error: { email: "User with the given email doesn't exist." } });
   }
   //Checking if user password matches or not
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res
       .status(400)
-      .send({ error: "The given email or password is invalid" });
+      .send({ error: { email: "The given email or password is invalid" } });
   }
   //Generating json web token of the user
   const token = user.generateJWTToken();
