@@ -7,6 +7,8 @@ const morgan = require("morgan");
 const register = require("./routes/register");
 const login = require("./routes/login");
 const products = require("./routes/products");
+const categories = require("./routes/categories");
+const colors = require("./routes/colors");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -28,5 +30,7 @@ app.use(morgan("tiny"));
 app.use("/api/register", register);
 app.use("/api/login", login);
 app.use("/api/products", products);
+app.use("/api/categories", categories);
+app.use("/api/colors", colors);
 
 app.listen(port, () => console.log("Listening to port " + port));

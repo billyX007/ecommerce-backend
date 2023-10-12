@@ -18,7 +18,12 @@ const productSchema = new Schema({
     min: 0,
     required: true,
   },
-  categories: [String],
+  categories: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+    },
+  ],
   tags: [String],
   created_at: { type: Date, default: Date.now(), immutable: true },
   updated_at: { type: Date, default: Date.now() },
@@ -35,12 +40,7 @@ const validationSchema = Joi.object({
   name: Joi.string().min(3).max(100).required().label("Product Name"),
   price: Joi.number().min(0).required().label("Product Price"),
   inStock: Joi.number().min(0).required().label("Stock"),
-  categories: Joi.array().items(
-    Joi.object({
-      label: Joi.string(),
-      value: Joi.string(),
-    })
-  ),
+  categories: Joi.array().items(Joi.string()),
   tags: Joi.array().items(
     Joi.object({
       label: Joi.string(),
