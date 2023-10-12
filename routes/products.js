@@ -5,11 +5,20 @@ const { joiErrorsToObject } = require("../utils/helper");
 const { default: mongoose } = require("mongoose");
 
 router.get("/", async (req, res) => {
-  const products = await Product.find().populate({
-    path: "categories",
-    select: ["_id", "name"],
-  });
-  console.log(products[0].categories[0]);
+  const select = ["_id", "name"];
+  const products = await Product.find()
+    .populate({
+      path: "categories",
+      select,
+    })
+    .populate({
+      path: "tags",
+      select,
+    })
+    .populate({
+      path: "colors",
+      select,
+    });
   res.send({
     products: products,
   });
@@ -22,7 +31,7 @@ router.post("/", async (req, res) => {
     return res.status(400).send({ error: joiErrorsToObject(joiErrors) });
   }
 
-  const { name, price, inStock, categories, tags } = req.body;
+  const { name, price, inStock, categories, tags, colors } = req.body;
 
   if (categories.length) {
     let error = {};
@@ -43,6 +52,7 @@ router.post("/", async (req, res) => {
     inStock,
     categories,
     tags,
+    colors,
   });
 
   product = await product.save();
@@ -51,6 +61,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  const select = ["_id", "name"];
   const isValid = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!isValid) {
     return res.status(400).send({ error: "The given ID is not valid." });
@@ -58,9 +69,17 @@ router.get("/:id", async (req, res) => {
   const product = await Product.findOne({ _id: req.params.id })
     .populate({
       path: "categories",
-      select: ["name", "_id"],
+      select,
     })
-    .select("_id name price inStock categories tags");
+    .populate({
+      path: "tags",
+      select,
+    })
+    .populate({
+      path: "colors",
+      select,
+    })
+    .select("_id name price inStock categories tags colors");
   if (!product) {
     return res
       .status(404)

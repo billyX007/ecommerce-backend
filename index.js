@@ -8,6 +8,7 @@ const register = require("./routes/register");
 const login = require("./routes/login");
 const products = require("./routes/products");
 const categories = require("./routes/categories");
+const tags = require("./routes/tags");
 const colors = require("./routes/colors");
 
 const app = express();
@@ -32,5 +33,6 @@ app.use("/api/login", login);
 app.use("/api/products", products);
 app.use("/api/categories", categories);
 app.use("/api/colors", colors);
+app.use("/api/tags", tags);
 
 app.listen(port, () => console.log("Listening to port " + port));
