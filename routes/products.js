@@ -3,6 +3,7 @@ const router = express.Router();
 const { Product, validate } = require("../models/product");
 const { joiErrorsToObject } = require("../utils/helper");
 const { default: mongoose } = require("mongoose");
+const auth = require("../middlewares/auth");
 
 router.get("/", async (req, res) => {
   const select = ["_id", "name"];
@@ -24,7 +25,7 @@ router.get("/", async (req, res) => {
   });
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error: joiErrors } = validate(req.body);
 
   if (joiErrors) {
@@ -82,7 +83,7 @@ router.get("/:id", async (req, res) => {
   res.send({ product });
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const isValid = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!isValid) {
     return res.status(400).send({ error: "The given ID is not valid." });
@@ -118,7 +119,7 @@ router.put("/:id", async (req, res) => {
   res.send({ product });
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const isValid = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!isValid) {
     return res.status(400).send({ error: "The given ID is not valid." });
