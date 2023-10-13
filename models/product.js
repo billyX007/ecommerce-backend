@@ -56,6 +56,8 @@ const validationSchema = Joi.object({
   tags: Joi.array().items(Joi.string()),
   colors: Joi.array().items(Joi.string()),
   is_featured: Joi.bool(),
+  created_at: Joi.string(),
+  updated_at: Joi.string(),
 });
 
 module.exports = {

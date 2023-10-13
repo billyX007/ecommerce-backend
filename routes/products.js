@@ -72,7 +72,8 @@ router.get("/:id", async (req, res) => {
     .populate({
       path: "colors",
       select: [...select, "code"],
-    });
+    })
+    .select("-__v");
 
   if (!product) {
     return res
