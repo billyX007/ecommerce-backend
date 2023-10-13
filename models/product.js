@@ -36,6 +36,7 @@ const productSchema = new Schema({
       ref: "Color",
     },
   ],
+  is_featured: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now(), immutable: true },
   updated_at: { type: Date, default: Date.now() },
 });
@@ -54,6 +55,7 @@ const validationSchema = Joi.object({
   categories: Joi.array().items(Joi.string()),
   tags: Joi.array().items(Joi.string()),
   colors: Joi.array().items(Joi.string()),
+  is_featured: Joi.bool(),
 });
 
 module.exports = {

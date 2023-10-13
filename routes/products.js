@@ -30,9 +30,7 @@ router.post("/", async (req, res) => {
   if (joiErrors) {
     return res.status(400).send({ error: joiErrorsToObject(joiErrors) });
   }
-
-  const { name, price, inStock, categories, tags, colors } = req.body;
-
+  const { categories } = req.body;
   if (categories.length) {
     let error = {};
     categories.forEach((item, i) => {
@@ -47,12 +45,7 @@ router.post("/", async (req, res) => {
   }
 
   let product = new Product({
-    name,
-    price,
-    inStock,
-    categories,
-    tags,
-    colors,
+    ...req.body,
   });
 
   product = await product.save();
@@ -77,9 +70,9 @@ router.get("/:id", async (req, res) => {
     })
     .populate({
       path: "colors",
-      select,
-    })
-    .select("_id name price inStock categories tags colors");
+      select: [...select, "code"],
+    });
+
   if (!product) {
     return res
       .status(404)

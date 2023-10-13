@@ -10,6 +10,7 @@ const products = require("./routes/products");
 const categories = require("./routes/categories");
 const tags = require("./routes/tags");
 const colors = require("./routes/colors");
+const filters = require("./routes/filters");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -34,5 +35,6 @@ app.use("/api/products", products);
 app.use("/api/categories", categories);
 app.use("/api/colors", colors);
 app.use("/api/tags", tags);
+app.use("/api/filters", filters);
 
 app.listen(port, () => console.log("Listening to port " + port));
