@@ -3,13 +3,14 @@ const router = express.Router();
 const { Color, validate } = require("../models/color");
 const { joiErrorsToObject } = require("../utils/helper");
 const { default: mongoose } = require("mongoose");
+const auth = require("../middlewares/auth");
 
 router.get("/", async (req, res) => {
   const colors = await Color.find();
   res.send({ colors });
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error: joiErrors } = validate(req.body);
   if (joiErrors) {
     return res.status(400).send({ error: joiErrorsToObject(joiErrors) });
@@ -40,7 +41,7 @@ router.get("/:id", async (req, res) => {
   res.send({ color });
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const isValid = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!isValid) {
     return res.status(400).send({ error: "The given ID is not valid." });
@@ -62,7 +63,7 @@ router.put("/:id", async (req, res) => {
   res.send({ color });
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   let color = await Color.findOne({ _id: req.params.id });
   if (!color) {
     return res

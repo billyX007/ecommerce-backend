@@ -3,13 +3,14 @@ const router = express.Router();
 const { Tag, validate } = require("../models/tag");
 const { joiErrorsToObject } = require("../utils/helper");
 const { default: mongoose } = require("mongoose");
+const auth = require("../middlewares/auth");
 
 router.get("/", async (req, res) => {
   const tags = await Tag.find();
   res.send({ tags });
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error: joiErrors } = validate(req.body);
   if (joiErrors) {
     return res.status(400).send({ error: joiErrorsToObject(joiErrors) });
@@ -41,7 +42,7 @@ router.get("/:id", async (req, res) => {
   res.send({ tag });
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const isValid = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!isValid) {
     return res.status(400).send({ error: "The given ID is not valid." });
@@ -63,7 +64,7 @@ router.put("/:id", async (req, res) => {
   res.send({ tag });
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   let tag = await Tag.findOne({ _id: req.params.id });
   if (!tag) {
     return res
